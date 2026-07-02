@@ -1,0 +1,197 @@
+---
+/**
+ * „Warum ZAPF“ – editorialer Vorteils-Block mit nummerierter Liste
+ * und großem Bild-Slot (wird gegen ein echtes Foto getauscht).
+ */
+const benefits = [
+  {
+    title: 'Erfahrung, die man nicht kopieren kann',
+    text: 'Seit 1904 im Handwerk, seit über 50 Jahren im Garagenbau – mit mehr als 500.000 gebauten Garagen ist ZAPF Marktführer in Europa.',
+  },
+  {
+    title: '100 % Made in Germany',
+    text: 'Produktion in vier eigenen Werken in Deutschland. Das sichert gleichbleibende Qualität und kurze Lieferzeiten.',
+  },
+  {
+    title: 'Festpreis statt böser Überraschung',
+    text: 'Ihr Angebot ist ein verbindlicher Festpreis – inklusive Beratung, Planung, Lieferung und Montage aus einer Hand.',
+  },
+  {
+    title: 'Aufgebaut in wenigen Stunden',
+    text: 'Ihre Garage kommt fertig vom Werk und steht in der Regel noch am Tag der Lieferung – ohne wochenlange Baustelle.',
+  },
+  {
+    title: 'Individuell wie Ihr Zuhause',
+    text: 'Tore, Türen, Fenster, Putz und Farbe: Sie konfigurieren Ihre Garage passend zu Haus und Grundstück.',
+  },
+  {
+    title: 'Beton. Gebaut für Generationen',
+    text: 'Massiver Stahlbeton ist wartungsarm, einbruchhemmend und steigert dauerhaft den Wert Ihrer Immobilie.',
+  },
+] as const;
+---
+
+<section class="section section--concrete" id="vorteile">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="kicker">Warum ZAPF</p>
+      <h2 class="display">Der Marktführer baut auch Ihre Garage</h2>
+    </div>
+
+    <div class="benefits">
+      <div class="benefits__media reveal reveal--left">
+        <div class="img-slot benefits__img" data-image-slot="werk-montage.jpg">
+          {/* Platzhalter: stilisierte Kran-Montage einer Fertiggarage */}
+          <svg viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true" class="benefits__illustration">
+            <path d="M20 280 H380" />
+            <path d="M60 280 V40 H240" stroke-width="3" />
+            <path d="M60 80 L110 40 M60 130 L120 80 M60 180 L120 130" stroke-width="1.5" />
+            <path d="M200 40 V90" />
+            <path d="M185 90 h30 M200 90 V110" stroke-width="2" />
+            <rect x="130" y="110" width="140" height="100" stroke-width="3" />
+            <rect x="150" y="130" width="100" height="80" stroke-width="2" />
+            <path d="M150 150 H250 M150 170 H250 M150 190 H250" stroke-width="1.25" />
+            <path d="M300 280 V230 H360 V280" stroke-width="2" />
+          </svg>
+          <span class="benefits__img-note" aria-hidden="true">Foto folgt: werk-montage.jpg</span>
+        </div>
+        <div class="benefits__badge">
+          <span class="benefits__badge-value">1 Tag</span>
+          <span class="benefits__badge-label">von Lieferung bis fertige Garage</span>
+        </div>
+      </div>
+
+      <ol class="benefits__list">
+        {
+          benefits.map((b, i) => (
+            <li class="benefits__item reveal" style={`--reveal-delay: ${i * 0.07}s`}>
+              <span class="benefits__num">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 class="benefits__title">{b.title}</h3>
+                <p class="benefits__text">{b.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .benefits {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .benefits__media {
+    position: sticky;
+    top: 6.5rem;
+  }
+
+  .benefits__img {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .benefits__illustration {
+    width: 78%;
+    height: auto;
+    color: var(--ink-soft);
+    opacity: 0.6;
+  }
+
+  .benefits__img-note {
+    position: absolute;
+    bottom: 0.6rem;
+    right: 0.75rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    opacity: 0.7;
+  }
+
+  .benefits__badge {
+    position: absolute;
+    left: 1.25rem;
+    bottom: -1.5rem;
+    background: var(--red);
+    color: var(--white);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    box-shadow: 0 16px 32px -12px rgba(226, 0, 26, 0.5);
+    display: flex;
+    flex-direction: column;
+    max-width: 14rem;
+  }
+
+  .benefits__badge-value {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .benefits__badge-label {
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    opacity: 0.9;
+  }
+
+  .benefits__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .benefits__item {
+    display: flex;
+    gap: 1.25rem;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .benefits__item:first-child {
+    padding-top: 0;
+  }
+
+  .benefits__num {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--red);
+    line-height: 1.5;
+    flex: none;
+    min-width: 2.1rem;
+  }
+
+  .benefits__title {
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .benefits__text {
+    margin: 0.4rem 0 0;
+    font-size: 0.94rem;
+    line-height: 1.6;
+    color: var(--gray);
+  }
+
+  @media (max-width: 56rem) {
+    .benefits {
+      grid-template-columns: 1fr;
+    }
+
+    .benefits__media {
+      position: static;
+      margin-bottom: 2.5rem;
+    }
+  }
+</style>

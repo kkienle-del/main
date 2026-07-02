@@ -1,0 +1,729 @@
+---
+import GarageIcon from './GarageIcon.astro';
+import { HUBSPOT, LEGAL } from '../config';
+
+/**
+ * Mehrstufiger Lead-Funnel (4 Schritte), submitted an die HubSpot Forms API.
+ * Die Antworten aus Schritt 1–3 werden zusammen mit gclid/UTM in das
+ * Standardfeld „message“ geschrieben – so funktioniert jedes normale
+ * HubSpot-Formular ohne Custom Properties (Details im README).
+ */
+
+const garageTypes = [
+  { value: 'Einzelgarage', label: 'Einzelgarage', hint: 'Für 1 Fahrzeug', icon: 'einzel' },
+  { value: 'Doppelgarage', label: 'Doppelgarage', hint: 'Für 2 Fahrzeuge', icon: 'doppel' },
+  { value: 'Großraumgarage', label: 'Großraumgarage', hint: 'XXL, Camper & Hobby', icon: 'grossraum' },
+  { value: 'Reihengarage / Garagenpark', label: 'Reihengarage', hint: 'Mehrere Einheiten', icon: 'reihen' },
+] as const;
+
+const timeframes = [
+  { value: 'So bald wie möglich', label: 'So bald wie möglich' },
+  { value: 'In 3–6 Monaten', label: 'In 3–6 Monaten' },
+  { value: 'In 6–12 Monaten', label: 'In 6–12 Monaten' },
+  { value: 'Noch in der Planung', label: 'Ich plane noch' },
+] as const;
+---
+
+<div class="funnel" id="angebot" data-portal-id={HUBSPOT.portalId} data-form-guid={HUBSPOT.formGuid}>
+  <div class="funnel__head">
+    <p class="funnel__title">Ihr unverbindliches Angebot</p>
+    <p class="funnel__sub">Kostenlos &middot; unverbindlich &middot; in 60&nbsp;Sekunden</p>
+    <div class="funnel__progress" aria-hidden="true">
+      <div class="funnel__progress-bar" id="funnel-bar" style="width: 25%"></div>
+    </div>
+    <p class="funnel__step-label"><span id="funnel-step-label">Schritt 1 von 4</span></p>
+  </div>
+
+  <form id="funnel-form" novalidate>
+    {/* Honeypot gegen Spam-Bots */}
+    <input type="text" name="website_url" class="funnel__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    {/* ---------- Schritt 1: Garagentyp ---------- */}
+    <fieldset class="funnel__step is-active" data-step="1">
+      <legend class="funnel__question">Welche Garage suchen Sie?</legend>
+      <div class="funnel__options funnel__options--grid">
+        {
+          garageTypes.map((t) => (
+            <label class="funnel__option">
+              <input type="radio" name="garagentyp" value={t.value} required />
+              <span class="funnel__option-card">
+                <GarageIcon type={t.icon} class="funnel__option-icon" />
+                <span class="funnel__option-label">{t.label}</span>
+                <span class="funnel__option-hint">{t.hint}</span>
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    {/* ---------- Schritt 2: Zeitrahmen ---------- */}
+    <fieldset class="funnel__step" data-step="2" hidden>
+      <legend class="funnel__question">Wann soll Ihre Garage stehen?</legend>
+      <div class="funnel__options funnel__options--list">
+        {
+          timeframes.map((t) => (
+            <label class="funnel__option">
+              <input type="radio" name="zeitrahmen" value={t.value} required />
+              <span class="funnel__option-card funnel__option-card--row">
+                <span class="funnel__option-label">{t.label}</span>
+                <svg class="funnel__option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    {/* ---------- Schritt 3: Bauort ---------- */}
+    <fieldset class="funnel__step" data-step="3" hidden>
+      <legend class="funnel__question">Wo soll gebaut werden?</legend>
+      <div class="funnel__field">
+        <label for="funnel-zip">Postleitzahl des Bauorts</label>
+        <input
+          type="text"
+          id="funnel-zip"
+          name="zip"
+          inputmode="numeric"
+          autocomplete="postal-code"
+          pattern="[0-9]{5}"
+          maxlength="5"
+          placeholder="z. B. 95448"
+          required
+        />
+        <p class="funnel__error" data-error-for="zip" hidden>Bitte eine gültige 5-stellige Postleitzahl eingeben.</p>
+      </div>
+      <p class="funnel__question funnel__question--small">Ist der Stellplatz bereits vorhanden?</p>
+      <div class="funnel__chips" role="radiogroup" aria-label="Stellplatz vorhanden?">
+        <label class="funnel__chip"><input type="radio" name="grundstueck" value="Ja" required /><span>Ja</span></label>
+        <label class="funnel__chip"><input type="radio" name="grundstueck" value="Nein" /><span>Nein</span></label>
+        <label class="funnel__chip"><input type="radio" name="grundstueck" value="Unsicher" /><span>Weiß ich nicht</span></label>
+      </div>
+      <p class="funnel__error" data-error-for="grundstueck" hidden>Bitte eine Option wählen.</p>
+      <button type="button" class="btn btn--primary funnel__next" data-next>Weiter</button>
+    </fieldset>
+
+    {/* ---------- Schritt 4: Kontakt ---------- */}
+    <fieldset class="funnel__step" data-step="4" hidden>
+      <legend class="funnel__question">Wohin dürfen wir Ihr Angebot senden?</legend>
+      <div class="funnel__field-row">
+        <div class="funnel__field">
+          <label for="funnel-firstname">Vorname</label>
+          <input type="text" id="funnel-firstname" name="firstname" autocomplete="given-name" required />
+          <p class="funnel__error" data-error-for="firstname" hidden>Bitte Vornamen angeben.</p>
+        </div>
+        <div class="funnel__field">
+          <label for="funnel-lastname">Nachname</label>
+          <input type="text" id="funnel-lastname" name="lastname" autocomplete="family-name" required />
+          <p class="funnel__error" data-error-for="lastname" hidden>Bitte Nachnamen angeben.</p>
+        </div>
+      </div>
+      <div class="funnel__field">
+        <label for="funnel-email">E-Mail-Adresse</label>
+        <input type="email" id="funnel-email" name="email" autocomplete="email" placeholder="ihre@email.de" required />
+        <p class="funnel__error" data-error-for="email" hidden>Bitte eine gültige E-Mail-Adresse eingeben.</p>
+      </div>
+      <div class="funnel__field">
+        <label for="funnel-phone">Telefonnummer <span class="funnel__optional">(für Rückfragen zum Angebot)</span></label>
+        <input type="tel" id="funnel-phone" name="phone" autocomplete="tel" placeholder="z. B. 0921 1234567" required />
+        <p class="funnel__error" data-error-for="phone" hidden>Bitte eine Telefonnummer eingeben.</p>
+      </div>
+      <label class="funnel__consent">
+        <input type="checkbox" name="privacy" required />
+        <span>
+          Ich habe die <a href={LEGAL.datenschutz} target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen und bin
+          einverstanden, dass ZAPF mich zu meiner Anfrage kontaktiert.
+        </span>
+      </label>
+      <p class="funnel__error" data-error-for="privacy" hidden>Bitte der Datenschutzerklärung zustimmen.</p>
+      <button type="submit" class="btn btn--primary funnel__submit" id="funnel-submit">
+        Kostenloses Angebot anfordern
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </button>
+      <p class="funnel__error funnel__error--global" id="funnel-global-error" hidden>
+        Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.
+      </p>
+      <p class="funnel__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="4" y="10" width="16" height="11" rx="2" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+        </svg>
+        SSL-verschlüsselt &middot; keine Weitergabe an Dritte
+      </p>
+    </fieldset>
+
+    <button type="button" class="funnel__back" id="funnel-back" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M19 12H5M11 18l-6-6 6-6" />
+      </svg>
+      Zurück
+    </button>
+  </form>
+</div>
+
+<style>
+  .funnel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pop);
+    border-top: 5px solid var(--red);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    scroll-margin-top: 6rem;
+  }
+
+  .funnel__head {
+    margin-bottom: 1.5rem;
+  }
+
+  .funnel__title {
+    margin: 0;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.35rem;
+    line-height: 1.15;
+  }
+
+  .funnel__sub {
+    margin: 0.35rem 0 1rem;
+    font-size: 0.875rem;
+    color: var(--gray);
+  }
+
+  .funnel__progress {
+    height: 0.375rem;
+    background: var(--concrete-deep);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .funnel__progress-bar {
+    height: 100%;
+    background: var(--red);
+    border-radius: 99px;
+    transition: width 0.5s var(--ease-out);
+  }
+
+  .funnel__step-label {
+    margin: 0.5rem 0 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+  }
+
+  .funnel__hp {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  .funnel__step {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .funnel__step.is-active {
+    animation: step-in 0.45s var(--ease-out) both;
+  }
+
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .funnel__question {
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 0;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .funnel__question--small {
+    font-size: 1rem;
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  .funnel__options--grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .funnel__options--list {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .funnel__option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .funnel__option-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem 0.75rem;
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s var(--ease-snap),
+      box-shadow 0.15s ease;
+    user-select: none;
+  }
+
+  .funnel__option-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .funnel__option input:focus-visible + .funnel__option-card {
+    outline: 3px solid var(--red);
+    outline-offset: 2px;
+  }
+
+  .funnel__option input:checked + .funnel__option-card {
+    border-color: var(--red);
+    background: var(--red-tint);
+  }
+
+  .funnel__option-icon {
+    width: 4rem;
+    height: auto;
+    color: var(--ink);
+  }
+
+  .funnel__option input:checked + .funnel__option-card .funnel__option-icon {
+    color: var(--red);
+  }
+
+  .funnel__option-label {
+    font-weight: 800;
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .funnel__option-hint {
+    font-size: 0.78rem;
+    color: var(--gray);
+  }
+
+  .funnel__option-card--row {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    padding: 0.9rem 1.1rem;
+  }
+
+  .funnel__option-arrow {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--gray);
+    flex: none;
+    transition: transform 0.15s var(--ease-out), color 0.15s ease;
+  }
+
+  .funnel__option-card--row:hover .funnel__option-arrow {
+    transform: translateX(4px);
+    color: var(--red);
+  }
+
+  .funnel__field {
+    margin-bottom: 1rem;
+  }
+
+  .funnel__field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .funnel__field label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .funnel__optional {
+    font-weight: 500;
+    color: var(--gray);
+  }
+
+  .funnel__field input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 0.15s ease;
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  .funnel__field input:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  .funnel__field input.is-invalid {
+    border-color: var(--error);
+  }
+
+  .funnel__chips {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .funnel__chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .funnel__chip span {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border: 2px solid var(--line);
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+  }
+
+  .funnel__chip input:checked + span {
+    border-color: var(--red);
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .funnel__chip input:focus-visible + span {
+    outline: 3px solid var(--red);
+    outline-offset: 2px;
+  }
+
+  .funnel__error {
+    margin: 0.4rem 0 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--error);
+  }
+
+  .funnel__error--global {
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+
+  .funnel__next,
+  .funnel__submit {
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  .funnel__submit svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .funnel__submit[disabled] {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+  }
+
+  .funnel__consent {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .funnel__consent input {
+    margin-top: 0.2rem;
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--red);
+    flex: none;
+  }
+
+  .funnel__secure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.9rem 0 0;
+    font-size: 0.78rem;
+    color: var(--gray);
+  }
+
+  .funnel__secure svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .funnel__back[hidden] {
+    display: none;
+  }
+
+  .funnel__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+    background: none;
+    border: 0;
+    padding: 0.25rem 0;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--gray);
+    transition: color 0.15s ease;
+  }
+
+  .funnel__back:hover {
+    color: var(--ink);
+  }
+
+  .funnel__back svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  @media (max-width: 26rem) {
+    .funnel__options--grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .funnel__field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const root = document.getElementById('angebot') as HTMLElement;
+  const form = document.getElementById('funnel-form') as HTMLFormElement;
+  const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.funnel__step'));
+  const bar = document.getElementById('funnel-bar') as HTMLElement;
+  const stepLabel = document.getElementById('funnel-step-label') as HTMLElement;
+  const backBtn = document.getElementById('funnel-back') as HTMLButtonElement;
+  const submitBtn = document.getElementById('funnel-submit') as HTMLButtonElement;
+  const globalError = document.getElementById('funnel-global-error') as HTMLElement;
+  const TOTAL = steps.length;
+  let current = 1;
+
+  /* gclid & UTM-Parameter beim ersten Aufruf sichern (überleben Reloads in der Session) */
+  const ATTRIBUTION_KEYS = ['gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+  try {
+    const params = new URLSearchParams(location.search);
+    for (const key of ATTRIBUTION_KEYS) {
+      const v = params.get(key);
+      if (v) sessionStorage.setItem('zapf_' + key, v);
+    }
+  } catch {
+    /* noop */
+  }
+
+  function track(eventName: string, data: Record<string, unknown> = {}) {
+    // Läuft über den gtag-Stub – wird nur gesendet, wenn Tracking eingewilligt & geladen ist
+    (window as any).gtag?.('event', eventName, data);
+  }
+
+  function showStep(n: number, direction: 'forward' | 'back' = 'forward') {
+    current = n;
+    for (const step of steps) {
+      const isTarget = Number(step.dataset.step) === n;
+      step.hidden = !isTarget;
+      step.classList.toggle('is-active', isTarget);
+    }
+    bar.style.width = `${(n / TOTAL) * 100}%`;
+    stepLabel.textContent = `Schritt ${n} von ${TOTAL}`;
+    backBtn.hidden = n === 1;
+    if (direction === 'forward' && n > 1) {
+      root.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      track('funnel_step_completed', { step: n - 1 });
+    }
+    // Fokus auf erstes Eingabefeld des Schritts (nur Textfelder, keine Radios)
+    const firstInput = steps[n - 1].querySelector<HTMLInputElement>('input:not([type="radio"]):not([type="checkbox"])');
+    if (firstInput && direction === 'forward') setTimeout(() => firstInput.focus({ preventScroll: true }), 300);
+  }
+
+  function setError(name: string, show: boolean) {
+    const el = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+    if (el) el.hidden = !show;
+    const input = form.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+    if (input && input.type !== 'radio' && input.type !== 'checkbox') {
+      input.classList.toggle('is-invalid', show);
+    }
+  }
+
+  /* Schritt 1 & 2: Auswahl einer Option führt automatisch weiter */
+  for (const name of ['garagentyp', 'zeitrahmen']) {
+    form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`).forEach((input) => {
+      input.addEventListener('change', () => {
+        setTimeout(() => showStep(current + 1), 220);
+      });
+    });
+  }
+
+  /* Schritt 3: Validierung von PLZ + Stellplatz */
+  form.querySelector<HTMLButtonElement>('[data-next]')?.addEventListener('click', () => {
+    const zip = form.elements.namedItem('zip') as HTMLInputElement;
+    const plot = form.querySelector<HTMLInputElement>('input[name="grundstueck"]:checked');
+    const zipOk = /^\d{5}$/.test(zip.value.trim());
+    setError('zip', !zipOk);
+    setError('grundstueck', !plot);
+    if (zipOk && plot) showStep(4);
+  });
+
+  backBtn.addEventListener('click', () => showStep(current - 1, 'back'));
+
+  /* ---------- Absenden an HubSpot ---------- */
+
+  function getCookie(name: string): string {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : '';
+  }
+
+  function collectAttribution(): string {
+    const parts: string[] = [];
+    for (const key of ATTRIBUTION_KEYS) {
+      try {
+        const v = sessionStorage.getItem('zapf_' + key);
+        if (v) parts.push(`${key}: ${v}`);
+      } catch {
+        /* noop */
+      }
+    }
+    return parts.join(' | ');
+  }
+
+  async function submitToHubspot(): Promise<void> {
+    const portalId = root.dataset.portalId;
+    const formGuid = root.dataset.formGuid;
+    const data = new FormData(form);
+
+    const attribution = collectAttribution();
+    const message = [
+      `Garagentyp: ${data.get('garagentyp')}`,
+      `Zeitrahmen: ${data.get('zeitrahmen')}`,
+      `PLZ Bauort: ${data.get('zip')}`,
+      `Stellplatz vorhanden: ${data.get('grundstueck')}`,
+      attribution ? `Kampagnendaten: ${attribution}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    if (!portalId || !formGuid) {
+      // Noch keine HubSpot-Konfiguration (.env) – Versand simulieren, damit die Seite testbar bleibt
+      console.warn('[ZAPF Funnel] PUBLIC_HUBSPOT_PORTAL_ID / PUBLIC_HUBSPOT_FORM_GUID fehlen – Lead wurde NICHT übermittelt:', message);
+      await new Promise((r) => setTimeout(r, 600));
+      return;
+    }
+
+    const payload = {
+      submittedAt: Date.now(),
+      fields: [
+        { objectTypeId: '0-1', name: 'firstname', value: String(data.get('firstname') || '') },
+        { objectTypeId: '0-1', name: 'lastname', value: String(data.get('lastname') || '') },
+        { objectTypeId: '0-1', name: 'email', value: String(data.get('email') || '') },
+        { objectTypeId: '0-1', name: 'phone', value: String(data.get('phone') || '') },
+        { objectTypeId: '0-1', name: 'zip', value: String(data.get('zip') || '') },
+        { objectTypeId: '0-1', name: 'message', value: message },
+      ],
+      context: {
+        hutk: getCookie('hubspotutk') || undefined,
+        pageUri: location.href,
+        pageName: document.title,
+      },
+      legalConsentOptions: {
+        consent: {
+          consentToProcess: true,
+          text: 'Ich habe die Datenschutzerklärung gelesen und bin einverstanden, dass ZAPF mich zu meiner Anfrage kontaktiert.',
+        },
+      },
+    };
+
+    const res = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formGuid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HubSpot-Antwort ${res.status}: ${await res.text()}`);
+    }
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    globalError.hidden = true;
+
+    /* Honeypot: von Bots ausgefüllt → still verwerfen */
+    if ((form.elements.namedItem('website_url') as HTMLInputElement).value) return;
+
+    const firstname = form.elements.namedItem('firstname') as HTMLInputElement;
+    const lastname = form.elements.namedItem('lastname') as HTMLInputElement;
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+    const phone = form.elements.namedItem('phone') as HTMLInputElement;
+    const privacy = form.elements.namedItem('privacy') as HTMLInputElement;
+
+    const checks: Array<[string, boolean]> = [
+      ['firstname', firstname.value.trim().length > 1],
+      ['lastname', lastname.value.trim().length > 1],
+      ['email', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())],
+      ['phone', phone.value.replace(/\D/g, '').length >= 6],
+      ['privacy', privacy.checked],
+    ];
+    let valid = true;
+    for (const [name, ok] of checks) {
+      setError(name, !ok);
+      if (!ok) valid = false;
+    }
+    if (!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.firstChild!.textContent = 'Wird gesendet … ';
+
+    try {
+      await submitToHubspot();
+      track('funnel_step_completed', { step: 4 });
+      try {
+        // Flag für die Danke-Seite: Conversion nur nach echtem Abschluss feuern
+        sessionStorage.setItem('zapf_lead_ok', '1');
+      } catch {
+        /* noop */
+      }
+      window.location.href = '/danke/';
+    } catch (err) {
+      console.error('[ZAPF Funnel]', err);
+      globalError.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.firstChild!.textContent = 'Kostenloses Angebot anfordern ';
+    }
+  });
+</script>

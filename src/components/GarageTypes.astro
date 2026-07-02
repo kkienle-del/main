@@ -1,0 +1,209 @@
+---
+import GarageIcon from './GarageIcon.astro';
+
+/**
+ * Modell-Übersicht. Die Bild-Slots (.img-slot) werden 1:1 gegen echte
+ * Produktfotos getauscht (siehe README, Abschnitt „Fotos einsetzen“).
+ * Preise vor Livegang prüfen – Stand: zapf-garagen.de, Mitte 2026.
+ */
+const models = [
+  {
+    icon: 'einzel',
+    name: 'Einzelgarage',
+    desc: 'Der Klassiker für ein Fahrzeug – mit Platz für Fahrräder, Reifen und Gartengeräte.',
+    price: 'ab 6.500 €',
+    img: 'einzelgarage.jpg',
+  },
+  {
+    icon: 'doppel',
+    name: 'Doppelgarage',
+    desc: 'Zwei Fahrzeuge, ein Baukörper. Wahlweise mit einem großen oder zwei getrennten Toren.',
+    price: 'Preis im Angebot',
+    img: 'doppelgarage.jpg',
+  },
+  {
+    icon: 'grossraum',
+    name: 'Großraumgarage',
+    desc: 'XXL-Format für Camper, Anhänger, Oldtimer oder die eigene Hobby-Werkstatt.',
+    price: 'ab 23.100 €',
+    img: 'grossraumgarage.jpg',
+  },
+  {
+    icon: 'reihen',
+    name: 'Reihengarage & Garagenpark',
+    desc: 'Flexibel kombinierbare Einheiten – ideal für Mehrfamilienhäuser, Gewerbe und Investoren.',
+    price: 'Preis im Angebot',
+    img: 'reihengarage.jpg',
+  },
+] as const;
+---
+
+<section class="section" id="modelle">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="kicker">Unsere Modelle</p>
+      <h2 class="display">Eine Garage für jeden Anspruch</h2>
+      <p>
+        Ob klassische Einzelgarage oder kompletter Garagenpark: Jede ZAPF Garage wird individuell
+        geplant – Größe, Tor, Farbe und Ausstattung bestimmen Sie.
+      </p>
+    </div>
+
+    <div class="models">
+      {
+        models.map((m, i) => (
+          <article class="model reveal" style={`--reveal-delay: ${i * 0.08}s`}>
+            <div class="model__media img-slot" data-image-slot={m.img}>
+              <GarageIcon type={m.icon} class="model__icon" />
+              <span class="model__media-note" aria-hidden="true">
+                Foto folgt: {m.img}
+              </span>
+            </div>
+            <div class="model__body">
+              <h3 class="model__name">{m.name}</h3>
+              <p class="model__desc">{m.desc}</p>
+              <div class="model__foot">
+                <span class="model__price">{m.price}</span>
+                <a href="#angebot" class="model__link">
+                  Angebot anfordern
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <p class="models__note reveal">
+      Alle Preise inkl. MwSt., zzgl. Lieferung – Ihr verbindlicher Festpreis steht im persönlichen Angebot.
+    </p>
+  </div>
+</section>
+
+<style>
+  .models {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .model {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+
+  .model:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-pop);
+  }
+
+  .model__media {
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .model__icon {
+    width: 44%;
+    height: auto;
+    color: var(--ink-soft);
+    opacity: 0.75;
+    transition: color 0.25s ease, transform 0.25s var(--ease-out);
+  }
+
+  .model:hover .model__icon {
+    color: var(--red);
+    transform: scale(1.06);
+  }
+
+  .model__media-note {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.65rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    opacity: 0.7;
+  }
+
+  .model__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.25rem 1.25rem 1.35rem;
+  }
+
+  .model__name {
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+
+  .model__desc {
+    margin: 0.6rem 0 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--gray);
+    flex: 1;
+  }
+
+  .model__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.9rem;
+  }
+
+  .model__price {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+
+  .model__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--red);
+    text-decoration: none;
+  }
+
+  .model__link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.15s var(--ease-out);
+  }
+
+  .model__link:hover svg {
+    transform: translateX(4px);
+  }
+
+  .models__note {
+    margin: 1.5rem 0 0;
+    font-size: 0.8rem;
+    color: var(--gray);
+  }
+
+  @media (max-width: 64rem) {
+    .models {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .models {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

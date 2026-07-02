@@ -1,0 +1,294 @@
+/* ============================================================
+   ZAPF Fertiggaragen – Design-System
+   Industriell-editorialer Look: Beton, Präzision, ZAPF-Rot.
+   ============================================================ */
+
+:root {
+  /* Farben – bei Bedarf zentral an die finale CI anpassen */
+  --red: #e2001a;
+  --red-dark: #b30014;
+  --red-tint: #fdeef0;
+  --ink: #17191e;          /* Anthrazit, fast schwarz */
+  --ink-soft: #3c4048;
+  --gray: #6d727c;
+  --concrete: #f3f2ef;     /* warmes Betongrau, Flächen */
+  --concrete-deep: #e7e5e0;
+  --line: #dddbd5;
+  --white: #ffffff;
+  --success: #1e8a4c;
+  --error: #c62828;
+
+  /* Typografie */
+  --font-display: 'Archivo Black', 'Archivo Variable', system-ui, sans-serif;
+  --font-body: 'Archivo Variable', system-ui, -apple-system, sans-serif;
+
+  /* Layout */
+  --container: 74rem;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --radius: 0.375rem;
+  --radius-lg: 0.75rem;
+  --shadow-card: 0 1px 2px rgba(23, 25, 30, 0.06), 0 12px 32px -12px rgba(23, 25, 30, 0.18);
+  --shadow-pop: 0 2px 4px rgba(23, 25, 30, 0.08), 0 24px 48px -16px rgba(23, 25, 30, 0.28);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.34, 1.3, 0.4, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--white);
+}
+
+/* ---------- Typo-Bausteine ---------- */
+
+h1, h2, h3, h4 {
+  margin: 0;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+/* Kicker: kleine Zeile über Headlines, mit rotem Markenquadrat */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+.kicker::before {
+  content: '';
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--red);
+  flex: none;
+}
+
+.kicker--light {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- Layout ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+}
+
+.section--concrete {
+  background: var(--concrete);
+}
+
+.section--ink {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.section-head {
+  max-width: 44rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.section-head h2 {
+  font-size: clamp(1.9rem, 4.2vw, 3rem);
+  margin-top: 0.9rem;
+}
+
+.section-head p {
+  margin: 1rem 0 0;
+  font-size: 1.0625rem;
+  color: var(--gray);
+  max-width: 38rem;
+}
+
+.section--ink .section-head p {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 1.75rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out),
+    background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn--primary {
+  background: var(--red);
+  color: var(--white);
+  box-shadow: 0 8px 20px -8px rgba(226, 0, 26, 0.55);
+}
+
+.btn--primary:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -10px rgba(226, 0, 26, 0.6);
+}
+
+.btn--ghost {
+  border-color: var(--line);
+  color: var(--ink);
+  background: transparent;
+}
+
+.btn--ghost:hover {
+  border-color: var(--ink);
+}
+
+.btn--ghost-light {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--white);
+  background: transparent;
+}
+
+.btn--ghost-light:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Scroll-Reveal-Animationen ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal--left {
+  transform: translateX(-30px);
+}
+
+.reveal--right {
+  transform: translateX(30px);
+}
+
+.reveal--left.is-visible,
+.reveal--right.is-visible {
+  transform: none;
+}
+
+/* ---------- Bild-Platzhalter ----------
+   Werden 1:1 gegen echte Fotos getauscht (siehe README).
+   Bewusst gestaltet, damit die Seite auch ohne Fotos sauber wirkt. */
+
+.img-slot {
+  position: relative;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 14px, rgba(23, 25, 30, 0.025) 14px 15px),
+    linear-gradient(160deg, var(--concrete) 0%, var(--concrete-deep) 100%);
+  border: 1px solid var(--line);
+}
+
+/* ---------- Barrierefreiheit / Motion ---------- */
+
+:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

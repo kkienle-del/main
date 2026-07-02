@@ -1,0 +1,155 @@
+---
+import { LEGAL } from '../config';
+---
+
+<div class="consent" id="consent-banner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>
+  <div class="consent__inner">
+    <div class="consent__text">
+      <p class="consent__title" id="consent-title">Cookies &amp; Messung</p>
+      <p class="consent__body">
+        Wir verwenden Cookies, um den Erfolg unserer Werbeanzeigen zu messen und die Seite zu
+        verbessern (Google Ads &amp; Google Analytics). Die Messung startet erst nach Ihrer
+        Einwilligung. Details in der
+        <a href={LEGAL.datenschutz} target="_blank" rel="noopener">Datenschutzerklärung</a>.
+      </p>
+    </div>
+    <div class="consent__actions">
+      <button type="button" class="btn btn--primary consent__btn" id="consent-accept">Alle akzeptieren</button>
+      <button type="button" class="btn btn--ghost consent__btn" id="consent-decline">Nur notwendige</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+    background: var(--white);
+    border-top: 3px solid var(--red);
+    box-shadow: 0 -12px 40px -12px rgba(23, 25, 30, 0.25);
+    transform: translateY(100%);
+    transition: transform 0.45s var(--ease-out);
+  }
+
+  .consent.is-open {
+    transform: none;
+  }
+
+  .consent__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .consent__text {
+    flex: 1 1 24rem;
+  }
+
+  .consent__title {
+    margin: 0 0 0.25rem;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .consent__body {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+
+  .consent__body a {
+    color: var(--ink);
+  }
+
+  .consent__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .consent__btn {
+    padding: 0.7rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 40rem) {
+    .consent__actions {
+      width: 100%;
+    }
+
+    .consent__btn {
+      flex: 1;
+    }
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = 'zapf_consent_v1';
+  const banner = document.getElementById('consent-banner') as HTMLElement;
+  const acceptBtn = document.getElementById('consent-accept') as HTMLButtonElement;
+  const declineBtn = document.getElementById('consent-decline') as HTMLButtonElement;
+
+  declare global {
+    interface Window {
+      gtag: (...args: unknown[]) => void;
+      __zapfLoadTracking: () => void;
+      __zapfOpenConsent: () => void;
+    }
+  }
+
+  function grantConsent() {
+    window.gtag('consent', 'update', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted',
+    });
+    window.__zapfLoadTracking();
+  }
+
+  function close(choice: 'all' | 'essential') {
+    try {
+      localStorage.setItem(STORAGE_KEY, choice);
+    } catch {
+      /* Storage nicht verfügbar – Banner erscheint beim nächsten Besuch erneut */
+    }
+    banner.classList.remove('is-open');
+    banner.addEventListener('transitionend', () => (banner.hidden = true), { once: true });
+  }
+
+  acceptBtn.addEventListener('click', () => {
+    grantConsent();
+    close('all');
+  });
+
+  declineBtn.addEventListener('click', () => close('essential'));
+
+  function open() {
+    banner.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => banner.classList.add('is-open')));
+  }
+
+  // Über den Footer-Link „Cookie-Einstellungen“ wieder öffnbar
+  window.__zapfOpenConsent = open;
+
+  let stored: string | null = null;
+  try {
+    stored = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    /* noop */
+  }
+
+  if (stored === 'all') {
+    grantConsent();
+  } else if (stored !== 'essential') {
+    // Kurz verzögert einblenden, damit zuerst die Seite wirkt
+    setTimeout(open, 900);
+  }
+</script>

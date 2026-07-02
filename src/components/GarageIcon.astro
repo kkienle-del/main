@@ -1,0 +1,58 @@
+---
+/**
+ * Architektonische Line-Art der Garagentypen.
+ * Wird im Funnel und in den Modell-Karten verwendet; erbt die Textfarbe.
+ */
+interface Props {
+  type: 'einzel' | 'doppel' | 'grossraum' | 'reihen';
+  class?: string;
+}
+
+const { type, class: className } = Astro.props;
+---
+
+{
+  type === 'einzel' && (
+    <svg class={className} viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true">
+      <rect x="14" y="18" width="92" height="58" />
+      <path d="M14 18 L60 6 L106 18" />
+      <rect x="30" y="32" width="60" height="44" />
+      <path d="M30 43 H90 M30 54 H90 M30 65 H90" stroke-width="2" />
+    </svg>
+  )
+}
+{
+  type === 'doppel' && (
+    <svg class={className} viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true">
+      <rect x="6" y="20" width="108" height="56" />
+      <path d="M6 20 L60 8 L114 20" />
+      <rect x="14" y="32" width="42" height="44" />
+      <rect x="64" y="32" width="42" height="44" />
+      <path d="M14 43 H56 M14 54 H56 M14 65 H56 M64 43 H106 M64 54 H106 M64 65 H106" stroke-width="2" />
+    </svg>
+  )
+}
+{
+  type === 'grossraum' && (
+    <svg class={className} viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true">
+      <rect x="6" y="12" width="108" height="64" />
+      <rect x="16" y="26" width="66" height="50" />
+      <path d="M16 38 H82 M16 50 H82 M16 62 H82" stroke-width="2" />
+      <rect x="90" y="40" width="16" height="36" />
+      <circle cx="102" cy="58" r="1.5" fill="currentColor" />
+      <rect x="90" y="24" width="16" height="10" stroke-width="2" />
+    </svg>
+  )
+}
+{
+  type === 'reihen' && (
+    <svg class={className} viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true">
+      <rect x="2" y="24" width="116" height="52" />
+      <path d="M40 24 V76 M80 24 V76" stroke-width="2" />
+      <rect x="8" y="34" width="26" height="42" stroke-width="2" />
+      <rect x="47" y="34" width="26" height="42" stroke-width="2" />
+      <rect x="86" y="34" width="26" height="42" stroke-width="2" />
+      <path d="M8 45 H34 M8 56 H34 M47 45 H73 M47 56 H73 M86 45 H112 M86 56 H112" stroke-width="1.5" />
+    </svg>
+  )
+}

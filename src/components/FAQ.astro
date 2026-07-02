@@ -1,0 +1,146 @@
+---
+/** Häufige Fragen – räumt typische Einwände vor der Anfrage aus. */
+const faqs = [
+  {
+    q: 'Was kostet eine ZAPF Fertiggarage?',
+    a: 'Einzelgaragen aus Beton gibt es ab 6.500 € inkl. MwSt. Der genaue Preis hängt von Größe, Ausstattung und Lieferort ab – deshalb erhalten Sie von uns ein individuelles Festpreis-Angebot, kostenlos und unverbindlich.',
+  },
+  {
+    q: 'Brauche ich eine Baugenehmigung?',
+    a: 'Das regelt die Landesbauordnung Ihres Bundeslands – in vielen Fällen sind Garagen bis zu einer bestimmten Größe verfahrensfrei. Ihr ZAPF Fachberater kennt die Vorgaben in Ihrer Region und unterstützt Sie bei allen Unterlagen.',
+  },
+  {
+    q: 'Wie lange dauert es bis zur fertigen Garage?',
+    a: 'Dank vier eigener Werke in Deutschland sind die Lieferzeiten kurz. Die Montage selbst dauert nur wenige Stunden: Die Garage kommt fertig per Spezialfahrzeug und wird direkt an ihren Platz gehoben.',
+  },
+  {
+    q: 'Welches Fundament wird benötigt?',
+    a: 'In der Regel genügen Streifenfundamente oder eine Fundamentplatte. Sie erhalten von uns einen exakten Fundamentplan – die Erstellung kann Ihr Bauunternehmen vor Ort übernehmen.',
+  },
+  {
+    q: 'Ist die Anfrage wirklich unverbindlich?',
+    a: 'Ja. Sie beantworten vier kurze Fragen, wir melden uns mit einem persönlichen Angebot. Es entstehen keine Kosten und keine Verpflichtungen – Sie entscheiden in Ruhe.',
+  },
+  {
+    q: 'Kann ich Tor, Farbe und Ausstattung selbst wählen?',
+    a: 'Selbstverständlich. Sektional- oder Schwingtor, Antrieb, Nebentür, Fenster, Putzstruktur und Farbe: Ihre Garage wird so konfiguriert, dass sie zu Haus und Grundstück passt.',
+  },
+] as const;
+---
+
+<section class="section section--concrete" id="faq">
+  <div class="container faq__container">
+    <div class="section-head reveal">
+      <p class="kicker">Häufige Fragen</p>
+      <h2 class="display">Gut zu wissen</h2>
+    </div>
+
+    <div class="faq">
+      {
+        faqs.map((f, i) => (
+          <details class="faq__item reveal" style={`--reveal-delay: ${i * 0.05}s`}>
+            <summary class="faq__question">
+              {f.q}
+              <span class="faq__toggle" aria-hidden="true" />
+            </summary>
+            <p class="faq__answer">{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__container {
+    max-width: 52rem;
+  }
+
+  .faq {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .faq__item {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .faq__item[open] {
+    border-color: var(--ink);
+    box-shadow: var(--shadow-card);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.35rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Plus/Minus-Indikator */
+  .faq__toggle {
+    position: relative;
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .faq__toggle::before,
+  .faq__toggle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    background: var(--red);
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .faq__toggle::before {
+    width: 100%;
+    height: 2.5px;
+  }
+
+  .faq__toggle::after {
+    width: 2.5px;
+    height: 100%;
+  }
+
+  .faq__item[open] .faq__toggle::after {
+    transform: scaleY(0);
+  }
+
+  .faq__answer {
+    margin: 0;
+    padding: 0 1.35rem 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--gray);
+  }
+</style>
+
+<script>
+  // Immer nur ein FAQ-Element geöffnet halten
+  const items = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq__item'));
+  for (const item of items) {
+    item.addEventListener('toggle', () => {
+      if (!item.open) return;
+      for (const other of items) {
+        if (other !== item) other.open = false;
+      }
+    });
+  }
+</script>

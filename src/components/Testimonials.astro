@@ -1,0 +1,118 @@
+---
+/**
+ * !!! WICHTIG (rechtlich): Die folgenden Zitate sind PLATZHALTER.
+ * Vor Livegang zwingend durch echte, dokumentierte Kundenstimmen ersetzen
+ * (UWG: erfundene Bewertungen sind abmahnfähig). Siehe README.
+ */
+const testimonials = [
+  {
+    quote:
+      'Von der Beratung bis zur Montage lief alles wie am Schnürchen. Morgens kam der Kran, mittags stand die Garage.',
+    name: 'M. Beispiel',
+    meta: 'Doppelgarage · Platzhalter-Zitat',
+  },
+  {
+    quote:
+      'Der Festpreis hat uns überzeugt – keine Nachträge, keine Überraschungen. Genau so stellt man sich das vor.',
+    name: 'S. Beispiel',
+    meta: 'Einzelgarage · Platzhalter-Zitat',
+  },
+  {
+    quote:
+      'Wir haben lange verglichen. Am Ende war ZAPF bei Qualität und Abwicklung einfach eine andere Liga.',
+    name: 'F. Beispiel',
+    meta: 'Großraumgarage · Platzhalter-Zitat',
+  },
+] as const;
+---
+
+<section class="section section--ink" id="stimmen">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="kicker kicker--light">Kundenstimmen</p>
+      <h2 class="display">Darauf bauen unsere Kunden</h2>
+    </div>
+
+    <div class="quotes">
+      {
+        testimonials.map((t, i) => (
+          <figure class="quote reveal" style={`--reveal-delay: ${i * 0.1}s`}>
+            <div class="quote__mark" aria-hidden="true">
+              „
+            </div>
+            <blockquote class="quote__text">{t.quote}</blockquote>
+            <figcaption class="quote__caption">
+              <span class="quote__name">{t.name}</span>
+              <span class="quote__meta">{t.meta}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .quote {
+    margin: 0;
+    padding: 1.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s var(--ease-out), border-color 0.25s ease;
+  }
+
+  .quote:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .quote__mark {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 0.6;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+
+  .quote__text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.85);
+    flex: 1;
+  }
+
+  .quote__caption {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .quote__name {
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+
+  .quote__meta {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 52rem) {
+    .quotes {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
