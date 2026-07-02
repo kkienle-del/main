@@ -43,6 +43,22 @@ import LeadFunnel from './LeadFunnel.astro';
     </div>
 
     <div class="hero__form">
+      {/* Rotierendes Siegel – überlappt die Funnel-Karte an der Ecke */}
+      <div class="hero__badge" aria-hidden="true">
+        <svg class="hero__badge-ring" viewBox="0 0 120 120">
+          <defs>
+            <path id="hero-badge-path" d="M 60,60 m -46,0 a 46,46 0 1,1 92,0 a 46,46 0 1,1 -92,0" fill="none"></path>
+          </defs>
+          <text class="hero__badge-text">
+            <textPath href="#hero-badge-path">Seit 1904 · Made in Germany ·</textPath>
+          </text>
+        </svg>
+        <span class="hero__badge-core">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square">
+            <path d="M5 13l5 5L20 7" />
+          </svg>
+        </span>
+      </div>
       <LeadFunnel />
     </div>
   </div>
@@ -163,9 +179,60 @@ import LeadFunnel from './LeadFunnel.astro';
   }
 
   .hero__form {
+    position: relative;
     opacity: 0;
     transform: translateY(46px) scale(0.985);
     animation: hero-card 0.9s var(--ease-out) 0.5s forwards;
+  }
+
+  /* ---------- Rotierendes Siegel ---------- */
+
+  .hero__badge {
+    position: absolute;
+    top: -4.1rem;
+    left: -4.3rem;
+    width: 7.4rem;
+    height: 7.4rem;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+  }
+
+  .hero__badge-ring {
+    position: absolute;
+    inset: 0;
+    animation: badge-spin 22s linear infinite;
+  }
+
+  .hero__badge-text {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    fill: var(--ink);
+  }
+
+  .hero__badge-core {
+    width: 2.9rem;
+    height: 2.9rem;
+    background: var(--red);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    box-shadow: 0 8px 18px -6px rgba(226, 0, 26, 0.55);
+  }
+
+  .hero__badge-core svg {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  @keyframes badge-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes hero-fade {
@@ -243,37 +310,9 @@ import LeadFunnel from './LeadFunnel.astro';
     .hero__drawing {
       display: none;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .hero__grid {
-      animation: none;
-    }
-
-    .hero__kicker,
-    .hero__sub,
-    .hero__cta-row,
-    .hero__form,
-    .hero__points li {
-      opacity: 1;
-      transform: none;
-      animation: none;
-    }
-
-    .hero__line-in {
-      transform: none;
-      animation: none;
-    }
-
-    .hero__drawing-paths path,
-    .hero__drawing-paths rect {
-      stroke-dashoffset: 0;
-      animation: none;
-    }
-
-    .hero__drawing-label {
-      opacity: 1;
-      animation: none;
+    .hero__badge {
+      display: none;
     }
   }
 </style>

@@ -28,6 +28,21 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
 
+    {/* --- Animations-Bootstrap: muss VOR dem Rendern laufen. ---
+        html.js schaltet die versteckten Ausgangszustände der Scroll-Reveals frei
+        (ohne JS bleibt die Seite vollständig sichtbar). html.reduce-motion
+        bildet die Nutzerpräferenz ab; Testumgebungen können Bewegung über
+        window.__ZAPF_FORCE_MOTION erzwingen. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      if (
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        !window.__ZAPF_FORCE_MOTION
+      ) {
+        document.documentElement.classList.add('reduce-motion');
+      }
+    </script>
+
     {/* --- Google Consent Mode v2: Standard = alles verweigert. ---
         gtag.js wird erst nach Einwilligung über den Consent-Banner geladen. */}
     <script is:inline define:vars={{ tracking: TRACKING }}>
@@ -80,7 +95,7 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
 
     {/* --- Animations-System: Reveals, Wort-Masken, Parallax, Magnet-Buttons --- */}
     <script>
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reduceMotion = document.documentElement.classList.contains('reduce-motion');
 
       /* [data-words]: Text in Wort-Masken zerlegen (nur reine Text-Elemente) */
       document.querySelectorAll<HTMLElement>('[data-words]').forEach((el) => {
@@ -141,6 +156,19 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
           });
           btn.addEventListener('mouseleave', () => {
             btn.style.transform = '';
+          });
+        });
+
+        /* Leichter 3D-Tilt für Modell-Karten */
+        document.querySelectorAll<HTMLElement>('.model').forEach((card) => {
+          card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            const rx = ((e.clientY - r.top) / r.height - 0.5) * -7;
+            const ry = ((e.clientX - r.left) / r.width - 0.5) * 7;
+            card.style.transform = `perspective(48rem) translateY(-6px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+          });
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
           });
         });
       }

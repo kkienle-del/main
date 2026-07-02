@@ -38,7 +38,7 @@ const testimonials = [
   <span class="ghost" data-parallax="0.1" aria-hidden="true">Stimmen</span>
   <div class="container">
     <div class="section-head">
-      <p class="kicker kicker--light reveal">Kundenstimmen</p>
+      <p class="kicker kicker--light kicker--rule reveal"><span>Kundenstimmen</span><i class="kicker__line"></i><span class="kicker__idx">04</span></p>
       <h2 class="display" data-words>Darauf bauen unsere Kunden</h2>
     </div>
   </div>
@@ -151,18 +151,6 @@ const testimonials = [
   @keyframes quotes-scroll {
     to {
       transform: translateX(-50%);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .quotes__track {
-      animation: none;
-      flex-wrap: wrap;
-      width: auto;
-    }
-
-    .quotes__group[aria-hidden='true'] {
-      display: none;
     }
   }
 </style>

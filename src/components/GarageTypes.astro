@@ -42,7 +42,7 @@ const models = [
   <span class="ghost" data-parallax="0.1" aria-hidden="true">Modelle</span>
   <div class="container">
     <div class="section-head">
-      <p class="kicker reveal">Unsere Modelle</p>
+      <p class="kicker kicker--rule reveal"><span>Unsere Modelle</span><i class="kicker__line"></i><span class="kicker__idx">01</span></p>
       <h2 class="display" data-words>Eine Garage für jeden Anspruch</h2>
       <p class="reveal" style="--reveal-delay: 0.2s">
         Ob klassische Einzelgarage oder kompletter Garagenpark: Jede ZAPF Garage wird individuell
@@ -103,10 +103,11 @@ const models = [
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+    will-change: transform;
   }
 
+  /* Anheben/Neigen übernimmt der 3D-Tilt (Base-Skript); CSS liefert den Schatten */
   .model:hover {
-    transform: translateY(-6px);
     box-shadow: var(--shadow-pop);
   }
 

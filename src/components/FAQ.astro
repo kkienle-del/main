@@ -32,7 +32,7 @@ const faqs = [
   <span class="ghost" data-parallax="0.1" aria-hidden="true">FAQ</span>
   <div class="container faq__container">
     <div class="section-head">
-      <p class="kicker reveal">Häufige Fragen</p>
+      <p class="kicker kicker--rule reveal"><span>Häufige Fragen</span><i class="kicker__line"></i><span class="kicker__idx">05</span></p>
       <h2 class="display" data-words>Gut zu wissen</h2>
     </div>
 
@@ -147,7 +147,7 @@ const faqs = [
 <script>
   /* Weiches Auf-/Zuklappen über die Web Animations API; es bleibt immer nur
      ein Element geöffnet. Fallback ohne Animation bei reduced motion. */
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduceMotion = document.documentElement.classList.contains('reduce-motion');
   const items = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq__item'));
 
   function animateBody(item: HTMLDetailsElement, opening: boolean) {

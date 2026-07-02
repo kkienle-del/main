@@ -117,6 +117,30 @@ h1, h2, h3, h4 {
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* Kicker mit durchgezogener Linie und Sektions-Index (editoriale Struktur) */
+.kicker--rule {
+  display: flex;
+  width: 100%;
+}
+
+.kicker__line {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  border: 0;
+  margin: 0;
+}
+
+.section--ink .kicker__line {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.kicker__idx {
+  font-variant-numeric: tabular-nums;
+  color: var(--gray);
+  letter-spacing: 0.1em;
+}
+
 /* ---------- Layout ---------- */
 
 .container {
@@ -230,30 +254,31 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* ---------- Scroll-Reveal-Animationen ---------- */
+/* ---------- Scroll-Reveal-Animationen ----------
+   Die versteckten Ausgangszustände gelten nur unter html.js (wird ganz früh
+   per Skript gesetzt). Läuft kein JavaScript, ist die Seite vollständig
+   sichtbar – nur eben ohne Scroll-Choreografie. */
 
 .reveal {
-  opacity: 0;
-  transform: translateY(48px);
   transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(48px);
 }
 
-.reveal--left {
+html.js .reveal--left {
   transform: translateX(-48px);
 }
 
-.reveal--right {
+html.js .reveal--right {
   transform: translateX(48px);
 }
 
-.reveal--left.is-visible,
-.reveal--right.is-visible {
+html.js .reveal.is-visible {
+  opacity: 1;
   transform: none;
 }
 
@@ -280,22 +305,33 @@ h1, h2, h3, h4 {
 
 /* Bild-/Media-Reveal: Fläche wird von unten aufgedeckt, Inhalt zoomt leicht heraus */
 .reveal-media {
-  clip-path: inset(100% 0 0 0);
   transition: clip-path 1s var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
 
 .reveal-media > * {
-  transform: scale(1.14);
   transition: transform 1.4s var(--ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
 
-.reveal-media.is-visible {
+/* Achtung: ein zu 100 % geclipptes Element hat für den IntersectionObserver
+   keine sichtbare Fläche und würde nie auslösen. Deshalb wird der Clip vom
+   nächstgelegenen .reveal-Vorfahren (der beobachtet wird) mit freigeschaltet. */
+html.js .reveal-media {
+  clip-path: inset(100% 0 0 0);
+}
+
+html.js .reveal-media > * {
+  transform: scale(1.14);
+}
+
+html.js .is-visible .reveal-media,
+html.js .reveal-media.is-visible {
   clip-path: inset(0 0 0 0);
 }
 
-.reveal-media.is-visible > * {
+html.js .is-visible .reveal-media > *,
+html.js .reveal-media.is-visible > * {
   transform: scale(1);
 }
 
@@ -353,21 +389,24 @@ h1, h2, h3, h4 {
   border: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+/* Reduzierte Bewegung: wird per Skript als Klasse gesetzt (statt Media-Query),
+   damit Testumgebungen die Animationen gezielt erzwingen können
+   (window.__ZAPF_FORCE_MOTION). Nutzerpräferenz bleibt der Standard. */
+html.reduce-motion {
+  scroll-behavior: auto;
+}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0s !important;
+}
 
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+html.reduce-motion .reveal {
+  opacity: 1;
+  transform: none;
 }

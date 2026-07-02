@@ -24,7 +24,7 @@ const steps = [
   <span class="ghost" data-parallax="0.1" aria-hidden="true">Ablauf</span>
   <div class="container">
     <div class="section-head">
-      <p class="kicker reveal">So einfach geht’s</p>
+      <p class="kicker kicker--rule reveal"><span>So einfach geht’s</span><i class="kicker__line"></i><span class="kicker__idx">03</span></p>
       <h2 class="display" data-words>In 4 Schritten zur eigenen Garage</h2>
     </div>
 
@@ -90,23 +90,21 @@ const steps = [
     font-family: var(--font-display);
     font-size: 1.1rem;
     border-radius: 50%;
+  }
+
+  /* Nummern poppen nacheinander auf, sobald der Schritt sichtbar wird
+     (nur mit JS versteckt – ohne JS bleiben sie einfach stehen) */
+  :global(html.js) .process__num {
     transform: scale(0);
   }
 
-  /* Nummern poppen nacheinander auf, sobald der Schritt sichtbar wird */
-  .reveal.is-visible .process__num {
+  :global(html.js) .reveal.is-visible .process__num {
     animation: num-pop 0.55s var(--ease-snap) var(--num-delay, 0.35s) forwards;
   }
 
   @keyframes num-pop {
     to {
       transform: scale(1);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .process__num {
-      transform: none;
     }
   }
 

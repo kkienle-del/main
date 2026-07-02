@@ -56,19 +56,16 @@ import { CONTACT } from '../config';
 
   .final__line-in {
     display: inline-block;
-    transform: translateY(115%);
     transition: transform 0.95s var(--ease-out);
     transition-delay: var(--line-delay, 0s);
   }
 
-  [data-words-observe].is-visible .final__line-in {
-    transform: none;
+  :global(html.js) .final__line-in {
+    transform: translateY(115%);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .final__line-in {
-      transform: none;
-    }
+  :global(html.js) [data-words-observe].is-visible .final__line-in {
+    transform: none;
   }
 
   .final__inner {
