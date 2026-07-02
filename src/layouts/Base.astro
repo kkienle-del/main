@@ -78,12 +78,20 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
     <slot />
     <ConsentBanner />
 
-    {/* --- Scroll-Reveal & Count-Up: dezente Animationen beim Scrollen --- */}
+    {/* --- Animations-System: Reveals, Wort-Masken, Parallax, Magnet-Buttons --- */}
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Elemente mit .reveal einblenden, sobald sie in den Viewport kommen
-      const revealEls = document.querySelectorAll<HTMLElement>('.reveal');
+      /* [data-words]: Text in Wort-Masken zerlegen (nur reine Text-Elemente) */
+      document.querySelectorAll<HTMLElement>('[data-words]').forEach((el) => {
+        const words = (el.textContent || '').trim().split(/\s+/);
+        el.innerHTML = words
+          .map((w, i) => `<span class="w"><span class="w__in" style="--w-delay:${(i * 0.055).toFixed(3)}s">${w}</span></span>`)
+          .join(' ');
+      });
+
+      /* Reveals: .reveal, [data-words] und .reveal-media beim Scrollen aktivieren */
+      const revealEls = document.querySelectorAll<HTMLElement>('.reveal, [data-words], [data-words-observe], .reveal-media');
       if (reduceMotion) {
         revealEls.forEach((el) => el.classList.add('is-visible'));
       } else {
@@ -96,9 +104,45 @@ const { title = SITE.title, description = SITE.description } = Astro.props;
               }
             }
           },
-          { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+          { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
         );
         revealEls.forEach((el) => io.observe(el));
+      }
+
+      /* Parallax: [data-parallax="0.2"] bewegt sich relativ zur Scroll-Position.
+         Sanft nachgeführt (Lerp) für das „schwebende“ Gefühl. */
+      const parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]')).map((el) => ({
+        el,
+        speed: parseFloat(el.dataset.parallax || '0.15'),
+        current: 0,
+      }));
+      if (!reduceMotion && parallaxEls.length) {
+        const tick = () => {
+          const vh = window.innerHeight;
+          for (const p of parallaxEls) {
+            const rect = p.el.getBoundingClientRect();
+            const target = (rect.top + rect.height / 2 - vh / 2) * -p.speed;
+            p.current += (target - p.current) * 0.12;
+            p.el.style.transform = `translate3d(0, ${p.current.toFixed(2)}px, 0)`;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+
+      /* Magnetische CTA-Buttons (nur präzise Zeiger, keine Touchscreens) */
+      if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+        document.querySelectorAll<HTMLElement>('.btn--primary').forEach((btn) => {
+          btn.addEventListener('mousemove', (e) => {
+            const r = btn.getBoundingClientRect();
+            const dx = (e.clientX - r.left - r.width / 2) * 0.18;
+            const dy = (e.clientY - r.top - r.height / 2) * 0.3;
+            btn.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+          });
+          btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+          });
+        });
       }
 
       // Zahlen hochzählen ([data-countup])

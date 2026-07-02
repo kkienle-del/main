@@ -22,6 +22,7 @@ import { CONTACT } from '../config';
       <a href="#angebot" class="btn btn--primary header__cta">Angebot sichern</a>
     </div>
   </div>
+  <div class="header__progress" id="scroll-progress" aria-hidden="true"></div>
 </header>
 
 <style>
@@ -125,6 +126,18 @@ import { CONTACT } from '../config';
     font-size: 0.95rem;
   }
 
+  /* Lesefortschritt als dünner roter Balken an der Header-Unterkante */
+  .header__progress {
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2.5px;
+    width: 100%;
+    background: var(--red);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
   @media (max-width: 48rem) {
     .header__claim,
     .header__phone-label {
@@ -149,7 +162,12 @@ import { CONTACT } from '../config';
 
 <script>
   const header = document.getElementById('site-header') as HTMLElement;
-  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 12);
+  const progress = document.getElementById('scroll-progress') as HTMLElement;
+  const onScroll = () => {
+    header.classList.toggle('is-scrolled', window.scrollY > 12);
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
+  };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 </script>

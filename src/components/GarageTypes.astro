@@ -38,12 +38,13 @@ const models = [
 ] as const;
 ---
 
-<section class="section" id="modelle">
+<section class="section garagetypes" id="modelle">
+  <span class="ghost" data-parallax="0.1" aria-hidden="true">Modelle</span>
   <div class="container">
-    <div class="section-head reveal">
-      <p class="kicker">Unsere Modelle</p>
-      <h2 class="display">Eine Garage für jeden Anspruch</h2>
-      <p>
+    <div class="section-head">
+      <p class="kicker reveal">Unsere Modelle</p>
+      <h2 class="display" data-words>Eine Garage für jeden Anspruch</h2>
+      <p class="reveal" style="--reveal-delay: 0.2s">
         Ob klassische Einzelgarage oder kompletter Garagenpark: Jede ZAPF Garage wird individuell
         geplant – Größe, Tor, Farbe und Ausstattung bestimmen Sie.
       </p>
@@ -52,8 +53,8 @@ const models = [
     <div class="models">
       {
         models.map((m, i) => (
-          <article class="model reveal" style={`--reveal-delay: ${i * 0.08}s`}>
-            <div class="model__media img-slot" data-image-slot={m.img}>
+          <article class="model reveal" style={`--reveal-delay: ${i * 0.09}s`}>
+            <div class="model__media img-slot reveal-media" style={`--reveal-delay: ${i * 0.09 + 0.1}s`} data-image-slot={m.img}>
               <GarageIcon type={m.icon} class="model__icon" />
               <span class="model__media-note" aria-hidden="true">
                 Foto folgt: {m.img}
@@ -83,6 +84,11 @@ const models = [
 </section>
 
 <style>
+  .garagetypes {
+    position: relative;
+    overflow: hidden;
+  }
+
   .models {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

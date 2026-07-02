@@ -28,22 +28,25 @@ const faqs = [
 ] as const;
 ---
 
-<section class="section section--concrete" id="faq">
+<section class="section section--concrete faq-section" id="faq">
+  <span class="ghost" data-parallax="0.1" aria-hidden="true">FAQ</span>
   <div class="container faq__container">
-    <div class="section-head reveal">
-      <p class="kicker">Häufige Fragen</p>
-      <h2 class="display">Gut zu wissen</h2>
+    <div class="section-head">
+      <p class="kicker reveal">Häufige Fragen</p>
+      <h2 class="display" data-words>Gut zu wissen</h2>
     </div>
 
     <div class="faq">
       {
         faqs.map((f, i) => (
-          <details class="faq__item reveal" style={`--reveal-delay: ${i * 0.05}s`}>
+          <details class="faq__item reveal" style={`--reveal-delay: ${i * 0.06}s`}>
             <summary class="faq__question">
               {f.q}
               <span class="faq__toggle" aria-hidden="true" />
             </summary>
-            <p class="faq__answer">{f.a}</p>
+            <div class="faq__body">
+              <p class="faq__answer">{f.a}</p>
+            </div>
           </details>
         ))
       }
@@ -123,6 +126,15 @@ const faqs = [
     transform: scaleY(0);
   }
 
+  .faq-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .faq__body {
+    overflow: hidden;
+  }
+
   .faq__answer {
     margin: 0;
     padding: 0 1.35rem 1.25rem;
@@ -133,13 +145,42 @@ const faqs = [
 </style>
 
 <script>
-  // Immer nur ein FAQ-Element geöffnet halten
+  /* Weiches Auf-/Zuklappen über die Web Animations API; es bleibt immer nur
+     ein Element geöffnet. Fallback ohne Animation bei reduced motion. */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const items = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq__item'));
+
+  function animateBody(item: HTMLDetailsElement, opening: boolean) {
+    const body = item.querySelector<HTMLElement>('.faq__body');
+    if (!body || reduceMotion) return;
+    const height = body.scrollHeight;
+    body.animate(
+      opening
+        ? [{ height: '0px', opacity: 0 }, { height: `${height}px`, opacity: 1 }]
+        : [{ height: `${height}px`, opacity: 1 }, { height: '0px', opacity: 0 }],
+      { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+    );
+  }
+
   for (const item of items) {
-    item.addEventListener('toggle', () => {
-      if (!item.open) return;
-      for (const other of items) {
-        if (other !== item) other.open = false;
+    const summary = item.querySelector<HTMLElement>('.faq__question');
+    summary?.addEventListener('click', (event) => {
+      event.preventDefault();
+      const opening = !item.open;
+      if (opening) {
+        for (const other of items) {
+          if (other !== item && other.open) {
+            animateBody(other, false);
+            const closeAfter = () => (other.open = false);
+            reduceMotion ? closeAfter() : setTimeout(closeAfter, 300);
+          }
+        }
+        item.open = true;
+        animateBody(item, true);
+      } else {
+        animateBody(item, false);
+        const closeAfter = () => (item.open = false);
+        reduceMotion ? closeAfter() : setTimeout(closeAfter, 300);
       }
     });
   }

@@ -1,0 +1,109 @@
+---
+/**
+ * Endloses Laufband im ZAPF-Rot – Markenbotschaften im Wechsel
+ * gefüllt/konturiert. Pausiert bei Hover, respektiert reduced motion.
+ */
+const items = [
+  'Made in Germany',
+  'Seit 1904',
+  'Über 500.000 Garagen',
+  'Festpreis-Garantie',
+  'Montage in Stunden',
+  'Marktführer in Europa',
+] as const;
+---
+
+<aside class="marquee-wrap" aria-label="ZAPF Markenversprechen">
+  <div class="marquee">
+    <div class="marquee__track">
+    {
+      [0, 1].map((copy) => (
+        <div class="marquee__group" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {items.map((item, i) => (
+            <span class:list={['marquee__item', { 'marquee__item--outline': i % 2 === 1 }]}>
+              {item}
+              <span class="marquee__dot" aria-hidden="true" />
+            </span>
+          ))}
+        </div>
+      ))
+    }
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* Wrapper clippt den horizontalen Überstand des gedrehten Bands,
+     lässt aber über padding-block Luft für die angehobenen Ecken */
+  .marquee-wrap {
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    padding-block: 1.5rem;
+    margin-block: -2rem;
+  }
+
+  .marquee {
+    background: var(--red);
+    color: var(--white);
+    overflow: hidden;
+    padding-block: 1.1rem;
+    /* leicht angeschrägt für den Kampagnen-Look */
+    transform: rotate(-1deg) scale(1.02);
+    box-shadow: 0 12px 30px -14px rgba(226, 0, 26, 0.5);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee 26s linear infinite;
+  }
+
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__group {
+    display: flex;
+    align-items: center;
+    flex: none;
+  }
+
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.6rem;
+    margin-right: 1.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .marquee__item--outline {
+    color: transparent;
+    -webkit-text-stroke: 1.25px rgba(255, 255, 255, 0.85);
+  }
+
+  .marquee__dot {
+    width: 0.55em;
+    height: 0.55em;
+    background: var(--white);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    opacity: 0.9;
+    -webkit-text-stroke: 0;
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+    }
+  }
+</style>

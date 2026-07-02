@@ -3,13 +3,14 @@ import { CONTACT } from '../config';
 ---
 
 <section class="final section section--ink">
+  <span class="final__ghost" data-parallax="0.14" aria-hidden="true">ZAPF</span>
   <div class="container final__inner">
-    <div class="final__copy reveal">
-      <h2 class="display final__headline">
-        Bereit für Ihre<br />
-        <span class="final__accent">neue Garage?</span>
+    <div class="final__copy">
+      <h2 class="display final__headline" data-words-observe>
+        <span class="final__line"><span class="final__line-in">Bereit für Ihre</span></span>
+        <span class="final__line"><span class="final__line-in final__accent" style="--line-delay: 0.14s">neue Garage?</span></span>
       </h2>
-      <p class="final__sub">
+      <p class="final__sub reveal" style="--reveal-delay: 0.3s">
         In 60 Sekunden angefragt, in wenigen Stunden montiert – und gebaut für Generationen.
       </p>
     </div>
@@ -32,18 +33,42 @@ import { CONTACT } from '../config';
     overflow: hidden;
   }
 
-  /* großes, angeschnittenes ZAPF-Wortzeichen als Hintergrund-Textur */
-  .final::before {
-    content: 'ZAPF';
+  /* großes, angeschnittenes ZAPF-Wortzeichen mit Parallax-Bewegung */
+  .final__ghost {
     position: absolute;
     right: -2rem;
     bottom: -3rem;
     font-family: var(--font-display);
     font-size: clamp(10rem, 26vw, 22rem);
     line-height: 0.8;
-    color: rgba(255, 255, 255, 0.035);
+    color: rgba(255, 255, 255, 0.04);
     pointer-events: none;
     user-select: none;
+    will-change: transform;
+  }
+
+  .final__line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.05em;
+    margin-bottom: -0.05em;
+  }
+
+  .final__line-in {
+    display: inline-block;
+    transform: translateY(115%);
+    transition: transform 0.95s var(--ease-out);
+    transition-delay: var(--line-delay, 0s);
+  }
+
+  [data-words-observe].is-visible .final__line-in {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .final__line-in {
+      transform: none;
+    }
   }
 
   .final__inner {

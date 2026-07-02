@@ -3,6 +3,8 @@
  * !!! WICHTIG (rechtlich): Die folgenden Zitate sind PLATZHALTER.
  * Vor Livegang zwingend durch echte, dokumentierte Kundenstimmen ersetzen
  * (UWG: erfundene Bewertungen sind abmahnfähig). Siehe README.
+ *
+ * Darstellung: endlos laufendes Zitat-Band, pausiert bei Hover.
  */
 const testimonials = [
   {
@@ -23,29 +25,42 @@ const testimonials = [
     name: 'F. Beispiel',
     meta: 'Großraumgarage · Platzhalter-Zitat',
   },
+  {
+    quote:
+      'Fundamentplan kam sofort, der Aufbau war ein Termin von zwei Stunden. So unkompliziert kann Bauen sein.',
+    name: 'K. Beispiel',
+    meta: 'Reihengarage · Platzhalter-Zitat',
+  },
 ] as const;
 ---
 
-<section class="section section--ink" id="stimmen">
+<section class="section section--ink quotes-section" id="stimmen">
+  <span class="ghost" data-parallax="0.1" aria-hidden="true">Stimmen</span>
   <div class="container">
-    <div class="section-head reveal">
-      <p class="kicker kicker--light">Kundenstimmen</p>
-      <h2 class="display">Darauf bauen unsere Kunden</h2>
+    <div class="section-head">
+      <p class="kicker kicker--light reveal">Kundenstimmen</p>
+      <h2 class="display" data-words>Darauf bauen unsere Kunden</h2>
     </div>
+  </div>
 
-    <div class="quotes">
+  <div class="quotes reveal">
+    <div class="quotes__track">
       {
-        testimonials.map((t, i) => (
-          <figure class="quote reveal" style={`--reveal-delay: ${i * 0.1}s`}>
-            <div class="quote__mark" aria-hidden="true">
-              „
-            </div>
-            <blockquote class="quote__text">{t.quote}</blockquote>
-            <figcaption class="quote__caption">
-              <span class="quote__name">{t.name}</span>
-              <span class="quote__meta">{t.meta}</span>
-            </figcaption>
-          </figure>
+        [0, 1].map((copy) => (
+          <div class="quotes__group" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {testimonials.map((t) => (
+              <figure class="quote">
+                <div class="quote__mark" aria-hidden="true">
+                  „
+                </div>
+                <blockquote class="quote__text">{t.quote}</blockquote>
+                <figcaption class="quote__caption">
+                  <span class="quote__name">{t.name}</span>
+                  <span class="quote__meta">{t.meta}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         ))
       }
     </div>
@@ -53,26 +68,49 @@ const testimonials = [
 </section>
 
 <style>
+  .quotes-section {
+    position: relative;
+    overflow: hidden;
+  }
+
   .quotes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    overflow: hidden;
+    /* weiche Kanten links/rechts */
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  }
+
+  .quotes__track {
+    display: flex;
+    width: max-content;
+    animation: quotes-scroll 42s linear infinite;
+  }
+
+  .quotes:hover .quotes__track {
+    animation-play-state: paused;
+  }
+
+  .quotes__group {
+    display: flex;
+    flex: none;
   }
 
   .quote {
-    margin: 0;
+    width: clamp(19rem, 28vw, 24rem);
+    flex: none;
+    margin: 0 0.65rem;
     padding: 1.75rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s var(--ease-out), border-color 0.25s ease;
+    transition: border-color 0.25s ease, background-color 0.25s ease;
   }
 
   .quote:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .quote__mark {
@@ -110,9 +148,21 @@ const testimonials = [
     color: rgba(255, 255, 255, 0.5);
   }
 
-  @media (max-width: 52rem) {
-    .quotes {
-      grid-template-columns: 1fr;
+  @keyframes quotes-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quotes__track {
+      animation: none;
+      flex-wrap: wrap;
+      width: auto;
+    }
+
+    .quotes__group[aria-hidden='true'] {
+      display: none;
     }
   }
 </style>

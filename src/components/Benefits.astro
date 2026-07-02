@@ -31,16 +31,17 @@ const benefits = [
 ] as const;
 ---
 
-<section class="section section--concrete" id="vorteile">
+<section class="section section--concrete benefits-section" id="vorteile">
+  <span class="ghost" data-parallax="0.1" aria-hidden="true">Warum</span>
   <div class="container">
-    <div class="section-head reveal">
-      <p class="kicker">Warum ZAPF</p>
-      <h2 class="display">Der Marktführer baut auch Ihre Garage</h2>
+    <div class="section-head">
+      <p class="kicker reveal">Warum ZAPF</p>
+      <h2 class="display" data-words>Der Marktführer baut auch Ihre Garage</h2>
     </div>
 
     <div class="benefits">
       <div class="benefits__media reveal reveal--left">
-        <div class="img-slot benefits__img" data-image-slot="werk-montage.jpg">
+        <div class="img-slot benefits__img reveal-media" data-image-slot="werk-montage.jpg">
           {/* Platzhalter: stilisierte Kran-Montage einer Fertiggarage */}
           <svg viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" aria-hidden="true" class="benefits__illustration">
             <path d="M20 280 H380" />
@@ -79,6 +80,11 @@ const benefits = [
 </section>
 
 <style>
+  .benefits-section {
+    position: relative;
+    overflow: hidden;
+  }
+
   .benefits {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);

@@ -3,31 +3,31 @@ import LeadFunnel from './LeadFunnel.astro';
 ---
 
 <section class="hero" id="top">
-  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="hero__grid" data-parallax="0.08" aria-hidden="true"></div>
   <div class="container hero__inner">
     <div class="hero__copy">
-      <p class="kicker reveal">Fertiggaragen direkt vom Marktführer</p>
+      <p class="kicker hero__kicker">Fertiggaragen direkt vom Marktführer</p>
       <h1 class="display hero__headline">
-        <span class="reveal" style="--reveal-delay: 0.05s">Ihre Garage.</span>
-        <span class="reveal" style="--reveal-delay: 0.15s">Aus Beton.</span>
-        <span class="hero__headline-accent reveal" style="--reveal-delay: 0.25s">Fürs Leben.</span>
+        <span class="hero__line"><span class="hero__line-in" style="--line-delay: 0.15s">Ihre Garage.</span></span>
+        <span class="hero__line"><span class="hero__line-in" style="--line-delay: 0.28s">Aus Beton.</span></span>
+        <span class="hero__line"><span class="hero__line-in hero__line-in--accent" style="--line-delay: 0.41s">Fürs Leben.</span></span>
       </h1>
-      <p class="hero__sub reveal" style="--reveal-delay: 0.35s">
+      <p class="hero__sub">
         Über <strong>500.000 gebaute Garagen</strong>, 100&nbsp;% Made in Germany und ein
         Festpreis, auf den Sie sich verlassen können. Beantworten Sie 4 kurze Fragen –
         wir melden uns mit Ihrem persönlichen Angebot.
       </p>
-      <ul class="hero__points reveal" style="--reveal-delay: 0.45s">
-        <li>Kostenlose &amp; unverbindliche Beratung</li>
-        <li>Montage in wenigen Stunden</li>
-        <li>Alles aus einer Hand – von Planung bis Aufbau</li>
+      <ul class="hero__points">
+        <li style="--point-delay: 0.85s">Kostenlose &amp; unverbindliche Beratung</li>
+        <li style="--point-delay: 0.95s">Montage in wenigen Stunden</li>
+        <li style="--point-delay: 1.05s">Alles aus einer Hand – von Planung bis Aufbau</li>
       </ul>
-      <div class="hero__cta-row reveal" style="--reveal-delay: 0.55s">
+      <div class="hero__cta-row">
         <a href="#angebot" class="btn btn--primary hero__cta-mobile">Jetzt Angebot sichern</a>
       </div>
 
       {/* Line-Art: technische Zeichnung einer Doppelgarage, zeichnet sich beim Laden selbst */}
-      <svg class="hero__drawing" viewBox="0 0 420 190" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <svg class="hero__drawing" data-parallax="0.06" viewBox="0 0 420 190" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <g class="hero__drawing-paths">
           <path d="M20 170 H400" />
           <rect x="60" y="50" width="300" height="120" />
@@ -42,7 +42,7 @@ import LeadFunnel from './LeadFunnel.astro';
       </svg>
     </div>
 
-    <div class="hero__form reveal reveal--right" style="--reveal-delay: 0.3s">
+    <div class="hero__form">
       <LeadFunnel />
     </div>
   </div>
@@ -57,16 +57,23 @@ import LeadFunnel from './LeadFunnel.astro';
     overflow: hidden;
   }
 
-  /* dezentes Blaupausen-Raster im Hintergrund */
+  /* dezentes Blaupausen-Raster, wandert langsam + Parallax beim Scrollen */
   .hero__grid {
     position: absolute;
-    inset: 0;
-    background-image: linear-gradient(rgba(23, 25, 30, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(23, 25, 30, 0.045) 1px, transparent 1px);
+    inset: -10% 0;
+    background-image: linear-gradient(rgba(23, 25, 30, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23, 25, 30, 0.05) 1px, transparent 1px);
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse 90% 80% at 30% 20%, black 30%, transparent 75%);
     -webkit-mask-image: radial-gradient(ellipse 90% 80% at 30% 20%, black 30%, transparent 75%);
     pointer-events: none;
+    animation: grid-pan 40s linear infinite;
+  }
+
+  @keyframes grid-pan {
+    to {
+      background-position: 48px 48px;
+    }
   }
 
   .hero__inner {
@@ -77,17 +84,33 @@ import LeadFunnel from './LeadFunnel.astro';
     align-items: start;
   }
 
+  /* ---------- Lade-Sequenz ---------- */
+
+  .hero__kicker {
+    opacity: 0;
+    animation: hero-fade 0.7s var(--ease-out) 0.05s forwards;
+  }
+
   .hero__headline {
     font-size: clamp(2.6rem, 6vw, 4.6rem);
     margin-top: 1.1rem;
     line-height: 0.98;
   }
 
-  .hero__headline span {
+  .hero__line {
     display: block;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+    margin-bottom: -0.04em;
   }
 
-  .hero__headline-accent {
+  .hero__line-in {
+    display: inline-block;
+    transform: translateY(115%);
+    animation: hero-rise 0.95s var(--ease-out) var(--line-delay, 0.15s) forwards;
+  }
+
+  .hero__line-in--accent {
     color: var(--red);
   }
 
@@ -97,6 +120,8 @@ import LeadFunnel from './LeadFunnel.astro';
     line-height: 1.6;
     color: var(--ink-soft);
     max-width: 34rem;
+    opacity: 0;
+    animation: hero-fade 0.8s var(--ease-out) 0.65s forwards;
   }
 
   .hero__points {
@@ -113,6 +138,9 @@ import LeadFunnel from './LeadFunnel.astro';
     gap: 0.65rem;
     font-weight: 600;
     font-size: 0.98rem;
+    opacity: 0;
+    transform: translateX(-18px);
+    animation: hero-slide 0.6s var(--ease-out) var(--point-delay, 0.85s) forwards;
   }
 
   .hero__points li::before {
@@ -126,11 +154,47 @@ import LeadFunnel from './LeadFunnel.astro';
 
   .hero__cta-row {
     margin-top: 1.75rem;
+    opacity: 0;
+    animation: hero-fade 0.7s var(--ease-out) 1.15s forwards;
   }
 
   .hero__cta-mobile {
     display: none;
   }
+
+  .hero__form {
+    opacity: 0;
+    transform: translateY(46px) scale(0.985);
+    animation: hero-card 0.9s var(--ease-out) 0.5s forwards;
+  }
+
+  @keyframes hero-fade {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes hero-rise {
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes hero-slide {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hero-card {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---------- Technische Zeichnung ---------- */
 
   .hero__drawing {
     margin-top: clamp(2rem, 4vw, 3.5rem);
@@ -142,7 +206,7 @@ import LeadFunnel from './LeadFunnel.astro';
   .hero__drawing-paths rect {
     stroke-dasharray: 1200;
     stroke-dashoffset: 1200;
-    animation: draw 2.8s var(--ease-out) 0.6s forwards;
+    animation: draw 3s var(--ease-out) 1s forwards;
   }
 
   .hero__drawing-label {
@@ -153,18 +217,12 @@ import LeadFunnel from './LeadFunnel.astro';
     fill: rgba(23, 25, 30, 0.55);
     stroke: none;
     opacity: 0;
-    animation: fade-in 0.8s ease 2.6s forwards;
+    animation: hero-fade 0.8s ease 3.2s forwards;
   }
 
   @keyframes draw {
     to {
       stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes fade-in {
-    to {
-      opacity: 1;
     }
   }
 
@@ -188,6 +246,25 @@ import LeadFunnel from './LeadFunnel.astro';
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .hero__grid {
+      animation: none;
+    }
+
+    .hero__kicker,
+    .hero__sub,
+    .hero__cta-row,
+    .hero__form,
+    .hero__points li {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .hero__line-in {
+      transform: none;
+      animation: none;
+    }
+
     .hero__drawing-paths path,
     .hero__drawing-paths rect {
       stroke-dashoffset: 0;
