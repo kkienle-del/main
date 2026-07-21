@@ -10,7 +10,7 @@ export const SITE = {
   name: 'ZAPF Fertiggaragen',
   title: 'Fertiggarage vom Marktführer – jetzt unverbindliches Angebot sichern | ZAPF',
   description:
-    'Ihre Betonfertiggarage von ZAPF: über 500.000 gebaute Garagen, 100 % Made in Germany, Festpreisgarantie. In 60 Sekunden zum unverbindlichen Angebot.',
+    'Ihre Betonfertiggarage von ZAPF: über 450.000 gebaute Garagen, 100 % Made in Germany, Festpreisgarantie. In 60 Sekunden zum unverbindlichen Angebot.',
 } as const;
 
 export const CONTACT = {

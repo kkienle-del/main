@@ -1,11 +1,12 @@
 ---
 import { CONTACT } from '../config';
+import Logo from './Logo.astro';
 ---
 
 <header class="header" id="site-header">
   <div class="container header__inner">
     <a href="#top" class="header__brand" aria-label="ZAPF – zur Startseite der Landingpage">
-      <span class="header__logo">ZAPF</span>
+      <Logo height="2.3rem" />
       <span class="header__claim">die Garage.</span>
     </a>
 
@@ -58,19 +59,9 @@ import { CONTACT } from '../config';
 
   .header__brand {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 0.6rem;
     text-decoration: none;
-  }
-
-  .header__logo {
-    font-family: var(--font-display);
-    font-size: 1.6rem;
-    line-height: 1;
-    color: var(--white);
-    background: var(--red);
-    padding: 0.3rem 0.55rem 0.25rem;
-    letter-spacing: 0.02em;
   }
 
   .header__claim {

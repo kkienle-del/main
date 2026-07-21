@@ -80,6 +80,14 @@ die Analytics-Historie des Kontakts zuordnen kann.
 | Funnel-Fragen & Optionen | `src/components/LeadFunnel.astro` |
 | Farben, Typografie, Abstände | `src/styles/global.css` (CSS Custom Properties) |
 
+### Offizielles Logo einsetzen
+
+Das Logo wird zentral über `src/components/Logo.astro` gerendert. Die
+offizielle Logodatei einfach als **`public/images/zapf-logo.svg`** (oder
+`.png`) ins Projekt legen – Header und Footer verwenden sie ab dem nächsten
+Build automatisch. Liegt keine Datei vor, erscheint der nachgebaute
+Schriftzug als Fallback.
+
 ### Fotos einsetzen
 
 Die Seite nutzt gestaltete Platzhalter (`.img-slot`, Beschriftung „Foto folgt“).

@@ -1,12 +1,13 @@
 ---
 import { CONTACT, LEGAL } from '../config';
+import Logo from './Logo.astro';
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__brand">
-      <span class="footer__logo">ZAPF</span>
+      <Logo height="2rem" />
       <p class="footer__tagline">die Garage.</p>
       <p class="footer__company">
         ZAPF GmbH &middot; Nürnberger Straße 38 &middot; 95448 Bayreuth<br />
@@ -38,15 +39,6 @@ const year = new Date().getFullYear();
     justify-content: space-between;
     gap: 2rem;
     flex-wrap: wrap;
-  }
-
-  .footer__logo {
-    display: inline-block;
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    color: var(--white);
-    background: var(--red);
-    padding: 0.25rem 0.5rem 0.2rem;
   }
 
   .footer__tagline {
